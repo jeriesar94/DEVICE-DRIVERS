@@ -1,0 +1,25 @@
+From a7e0dd446a8b464cd5fa2260bdda02a36baebb01 Mon Sep 17 00:00:00 2001
+From: jeriesar94 <jabedrabbo@asaltech.com>
+Date: Sun, 15 Oct 2017 15:44:22 +0300
+Subject: [PATCH] C2
+
+---
+ QEMU/Makefile.objs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/QEMU/Makefile.objs b/QEMU/Makefile.objs
+index c8b4893..3451d59 100644
+--- a/QEMU/Makefile.objs
++++ b/QEMU/Makefile.objs
+@@ -7,7 +7,7 @@ common-obj-$(CONFIG_ISA_TESTDEV) += pc-testdev.o
+ common-obj-$(CONFIG_PCI_TESTDEV) += pci-testdev.o
+ 
+ common-obj-y += unimp.o
+-
++common-obj-y += jeries_device.o
+ obj-$(CONFIG_VMPORT) += vmport.o
+ 
+ # ARM devices
+-- 
+1.9.1
+
