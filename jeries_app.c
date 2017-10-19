@@ -71,11 +71,13 @@ int main(){
 			getchar();
 			scanf("%c", &buff[buff_size]);
 			while(buff[buff_size] != '\n' &&  buff[buff_size] != '\r'){
-				scanf("%c", &buff[++buff_size]);
+				buff = realloc(buff, (++buff_size+1)*sizeof(char));
+				scanf("%c", &buff[buff_size]);
 			}
 			buff[buff_size] = '\0';
 			write_string_ioctl(fd, buff);
 			read_string_ioctl(fd, buff_size);
+			free(buff);
 			break;
 		default:
 			printf("invalid input, exitting!");
