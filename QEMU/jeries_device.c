@@ -48,6 +48,7 @@ In case a different address was requested, the default statement is invoked to i
 */
 static void jeries_mmiowrite(void *opaque, hwaddr addr, uint64_t value, unsigned size){
 	PCIJeriesDevState *state = (PCIJeriesDevState *) opaque;
+	PCIDevice *pci_dev = (PCIDevice *) opaque;
 	printf("MMIO write Ordered, addr=%x, value=%lu, size=%d\n",(unsigned) addr, value, size);
 	switch(addr){
 		case 0:
@@ -65,6 +66,8 @@ static void jeries_mmiowrite(void *opaque, hwaddr addr, uint64_t value, unsigned
 		default:
 			printf("MMIO not writable or not used\n");
 	}
+	state->irq_thrown = 1;
+	pci_irq_assert(pci_dev);
 }
 /*
 MEMORY MAPPED I/O READ function
@@ -158,6 +161,9 @@ static void jeries_iowrite(void *opaque, hwaddr addr, uint64_t value,unsigned si
 		default:
 			printf("IO not used\n");
 	}
+
+	state->irq_thrown = 1;
+	pci_irq_assert(pci_dev);
 }
 /*
 Port I/O READ function
