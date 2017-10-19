@@ -26,8 +26,26 @@ void sleep_ioctl(int fd){
 		exit(FAIL_SLEEP_DEV);
 	}
 }
+void write_string_ioctl(int fd, char *buffer){
+	int buff_inc = 0;
+	while(buffer[buff_inc] != '\0'){
+		ioctl(fd, JERIES_DEV_WRITE, buffer[buff_inc]);
+		buff_inc++;
+	}
+
+	ioctl(fd, JERIES_DEV_WRITE, buffer[buff_inc]);
+}
+void read_string_ioctl(int fd, int len){
+	ioctl(fd, JERIES_DEV_READ, 0);
+	while(len >= 0){
+		ioctl(fd, JERIES_DEV_READ, 1);
+		len--;
+	}
+}
 int main(){
 	int fd, sel;
+	int buff_size = 0;
+	char *buff = malloc(sizeof(char));
 	fd = open("/dev/jerdev", O_RDWR);
 	if(fd < 0){
 		printf("Can't open device file: %s\n", DEVICE_NAME);
@@ -35,7 +53,7 @@ int main(){
 	}
 	//fd = 0;
 
-	printf("Enter your desired command: 0-Wake up device\n 1-Get the device's state\n 2-Put the device to sleep\n ");
+	printf("Enter your desired command: 0-Wake up device\n 1-Get the device's state\n 2-Put the device to sleep\n 3- Enter a string to be reversed\n");
 	scanf("%d", &sel);
 	printf("\n");
 	switch(sel){
@@ -47,6 +65,17 @@ int main(){
 			break;
 		case 2:
 			sleep_ioctl(fd);
+			break;
+		case 3:
+			printf("Enter Your Desired String: \n");
+			getchar();
+			scanf("%c", &buff[buff_size]);
+			while(buff[buff_size] != '\n' &&  buff[buff_size] != '\r'){
+				scanf("%c", &buff[++buff_size]);
+			}
+			buff[buff_size] = '\0';
+			write_string_ioctl(fd, buff);
+			read_string_ioctl(fd, buff_size);
 			break;
 		default:
 			printf("invalid input, exitting!");
