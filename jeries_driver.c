@@ -61,7 +61,6 @@ static long device_ioctl(struct file *f, unsigned int cmd, unsigned long args){
 	info = pci_get_drvdata(jdev);
 	switch(cmd){
 		case JERIES_DEV_ALERT:
-			outb(1, info->port[0].start);
 			iowrite16(1, info->mem[0].start);
 			pr_alert("Device is Alert\n");
 			break;	
@@ -83,6 +82,18 @@ static long device_ioctl(struct file *f, unsigned int cmd, unsigned long args){
 				pr_alert("Device went to sleep\n");			
 			}
 			break;
+		case JERIES_DEV_WRITE:
+			outl(args, (info->port[0].start)+4);
+			break;
+		case JERIES_DEV_READ:
+			printk("ARGS: %d\n", args);
+			if(args != 0){
+				printk("%c \n", inb(info->port[0].start+4));
+			}
+			else{
+				outl(0, info->port[0].start+8);
+			}
+			break;
 		default: pr_alert("Not taking any action");
 			
 	}
@@ -91,7 +102,7 @@ static long device_ioctl(struct file *f, unsigned int cmd, unsigned long args){
 	return 0;
 }
 /*
-Function that handles interrupts sent to the device.
+Function that handles interrupts sent by the device.
 */
 static irqreturn_t jeries_tic_handler(int irq, void *dev_info){
 	struct tic_info *info = (struct tic_info *) dev_info;
@@ -212,7 +223,7 @@ static int jeries_tic_probe(struct pci_dev *dev, const struct pci_device_id *id)
 		goto out_iounmap;
 	}
 	//Send an interrupt and alert the device.
-	outb(1, info->port[0].start);
+	//outb(1, info->port[0].start);
 	iowrite8(1, info->mem[0].start);
 	//set driver information corresponding to this device.
 	jdev = dev;
